@@ -36,3 +36,7 @@ size-of-derive = { version = "0.1.0", path = "./size-of-derive" }
 
 [workspace]
 members = ["size-of-derive"]
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
