@@ -6,7 +6,7 @@ authors = ["Chase Wilson <me@chasewilson.dev>"]
 license = "MIT OR Apache-2.0"
 edition = "2021"
 readme = "README.md"
-repository = "https"
+repository = "https://github.com/Kixiron/size-of"
 keywords = [
     "memory",
     "heapsize",
