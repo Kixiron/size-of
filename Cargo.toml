@@ -27,10 +27,8 @@ default = ["derive", "std"]
 std = []
 derive = ["size-of-derive"]
 
-[dependencies.size-of-derive]
-path = "./size-of-derive"
-version = "0.1.0"
-optional = true
+[dependencies]
+size-of-derive = { version = "0.1.0", path = "./size-of-derive", optional = true }
 
 [dev-dependencies]
 trybuild = "1.0.64"

@@ -9,4 +9,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased] - ReleaseDate
 
 <!-- next-url -->
-[Unreleased]: https://github.com/Kixiron/lasso/compare/...HEAD
+[Unreleased]: https://github.com/Kixiron/size-of/compare/...HEAD
