@@ -1,0 +1,40 @@
+[package]
+name = "size-of"
+version = "0.1.0"
+description = "A crate for measuring the total memory usage of an object"
+authors = ["Chase Wilson <me@chasewilson.dev>"]
+license = "MIT OR Apache-2.0"
+edition = "2021"
+readme = "README.md"
+repository = "https"
+keywords = [
+    "memory",
+    "heapsize",
+    "profiling",
+    "memory-usage",
+    "memory-profiling",
+]
+categories = [
+    "no-std",
+    "development-tools",
+    "memory-management",
+    "development-tools::debugging",
+    "development-tools::profiling",
+]
+
+[features]
+default = ["derive", "std"]
+std = []
+derive = ["size-of-derive"]
+
+[dependencies.size-of-derive]
+path = "./size-of-derive"
+version = "0.1.0"
+optional = true
+
+[dev-dependencies]
+trybuild = "1.0.64"
+size-of-derive = { version = "0.1.0", path = "./size-of-derive" }
+
+[workspace]
+members = ["size-of-derive"]

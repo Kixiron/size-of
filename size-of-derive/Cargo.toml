@@ -1,0 +1,14 @@
+[package]
+name = "size-of-derive"
+version = "0.1.0"
+authors = ["Chase Wilson <me@chasewilson.dev>"]
+license = "MIT OR Apache-2.0"
+edition = "2021"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+quote = "1.0.21"
+proc-macro2 = "1.0.43"
+syn = { version = "1.0.99", features = ["printing", "extra-traits"] }
