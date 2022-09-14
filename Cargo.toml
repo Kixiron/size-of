@@ -1,6 +1,6 @@
 [package]
 name = "size-of"
-version = "0.1.0"
+version = "0.1.1"
 description = "A crate for measuring the total memory usage of an object"
 authors = ["Chase Wilson <me@chasewilson.dev>"]
 license = "MIT OR Apache-2.0"
