@@ -2,9 +2,9 @@
 macro_rules! impl_total_size_childless {
     ($($($ty:ident)::+$(<$($generic:ident),* $(,)?>)?),* $(,)?) => {
         $(
-            impl $(<$($generic),*>)? SizeOf for $($ty)::+ $(<$($generic),*>)? {
+            impl $(<$($generic),*>)? $crate::SizeOf for $($ty)::+ $(<$($generic),*>)? {
                 #[inline]
-                fn size_of_children(&self, _context: &mut Context) {}
+                fn size_of_children(&self, _context: &mut $crate::Context) {}
             }
         )*
     };
@@ -15,13 +15,13 @@ macro_rules! impl_tuple {
     ($(($($elem:ident),* $(,)?)),* $(,)?) => {
         $(
             #[allow(non_snake_case)]
-            impl<$($elem,)*> SizeOf for ($($elem,)*)
+            impl<$($elem,)*> $crate::SizeOf for ($($elem,)*)
             where
-                $($elem: SizeOf,)*
+                $($elem: $crate::SizeOf,)*
             {
                 #[inline]
                 #[allow(unused_variables)]
-                fn size_of_children(&self, context: &mut Context) {
+                fn size_of_children(&self, context: &mut $crate::Context) {
                     let ($($elem,)*) = self;
                     $($elem.size_of_children(context);)*
                 }
@@ -62,9 +62,9 @@ macro_rules! impl_function_ptrs {
     // a whole 'nother can of worms I ain't dealing with
     (@inner $cconv:literal $(($($ty:ident),* $(,)?)),* $(,)?) => {
         $(
-            impl<$($ty,)* U> SizeOf for extern $cconv fn($($ty),*) -> U {
+            impl<$($ty,)* U> $crate::SizeOf for extern $cconv fn($($ty),*) -> U {
                 #[inline]
-                fn size_of_children(&self, _context: &mut Context) {}
+                fn size_of_children(&self, _context: &mut $crate::Context) {}
             }
         )*
     };

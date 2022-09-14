@@ -12,6 +12,7 @@ mod core_impls;
 mod human_bytes;
 mod pointers;
 mod std_impls;
+mod support;
 mod tests;
 
 pub use human_bytes::HumanBytes;
@@ -88,6 +89,8 @@ pub trait SizeOf {
     fn size_of_children(&self, context: &mut Context);
 }
 
+/// The context of a size query, used to keep track of shared pointers and the
+/// aggregated totals of seen data
 #[derive(Debug, Clone, Default)]
 #[cfg_attr(feature = "derive", derive(SizeOf), size_of(crate = "crate"))]
 pub struct Context {
@@ -106,11 +109,13 @@ pub struct Context {
 }
 
 impl Context {
+    /// Creates a new, empty context
     #[inline]
     pub fn new() -> Self {
         Self::default()
     }
 
+    /// Returns `true` if the current context is shared
     #[inline]
     pub const fn is_shared(&self) -> bool {
         self.is_shared
@@ -128,17 +133,22 @@ impl Context {
         self
     }
 
+    /// Adds one distinct allocation to the current context
     #[inline]
     pub fn add_distinct_allocation(&mut self) -> &mut Self {
         self.add_distinct_allocations(1)
     }
 
+    /// Adds `allocations` distinct allocations to the current context
     #[inline]
     pub fn add_distinct_allocations(&mut self, allocations: usize) -> &mut Self {
         self.distinct_allocations += allocations;
         self
     }
 
+    /// Adds `size` to the total bytes
+    ///
+    /// - Adds `size` to the shared bytes if the context is currently shared
     #[inline]
     pub fn add(&mut self, size: usize) -> &mut Self {
         self.total_bytes += size;
@@ -149,6 +159,16 @@ impl Context {
         self
     }
 
+    /// Adds `size` shared bytes
+    #[inline]
+    pub fn add_shared(&mut self, size: usize) -> &mut Self {
+        self.shared_bytes += size;
+        self
+    }
+
+    /// Adds `size` to the total and excess bytes
+    ///
+    /// - Adds `size` to the shared bytes if the context is currently shared
     #[inline]
     pub fn add_excess(&mut self, size: usize) -> &mut Self {
         self.total_bytes += size;
@@ -160,6 +180,11 @@ impl Context {
         self
     }
 
+    /// Adds a vector-like object to the current context.
+    ///
+    /// - Adds `len * element_size` to the total bytes
+    /// - Adds `len * element_size` to the shared bytes if the context is
+    ///   currently shared
     #[inline]
     pub fn add_arraylike(&mut self, len: usize, element_size: usize) -> &mut Self {
         let bytes = len * element_size;
@@ -171,6 +196,12 @@ impl Context {
         self
     }
 
+    /// Adds a vector-like object to the current context.
+    ///
+    /// - Adds `capacity * element_size` to the total bytes
+    /// - Adds `(capacity - len) * element_size` to the excess bytes
+    /// - Adds `capacity * element_size` to the shared bytes if the context is
+    ///   currently shared
     #[inline]
     pub fn add_vectorlike(
         &mut self,
@@ -182,6 +213,7 @@ impl Context {
         let allocated = capacity * element_size;
         self.total_bytes += allocated;
         self.excess_bytes += allocated - used;
+
         if self.is_shared {
             self.shared_bytes += allocated;
         }
@@ -189,18 +221,24 @@ impl Context {
         self
     }
 
+    /// Returns `true` and adds the given pointer to the current context if it
+    /// hasn't seen it yet. Returns `false` if the current context has seen the
+    /// pointer before
     #[inline]
     pub fn insert_ptr<T: ?Sized>(&mut self, ptr: *const T) -> bool {
         // TODO: Use `pointer::addr()` whenever strict provenance stabilizes
         self.pointers.insert(ptr as *const T as *const u8 as usize)
     }
 
+    /// Adds the given pointer to the current context regardless of whether it's
+    /// seen it yet
     #[inline]
     pub fn add_ptr<T: ?Sized>(&mut self, ptr: *const T) -> &mut Self {
         self.insert_ptr(ptr);
         self
     }
 
+    /// Returns `true` if the context has seen the given pointer
     #[inline]
     pub fn contains_ptr<T: ?Sized>(&self, ptr: *const T) -> bool {
         // TODO: Use `pointer::addr()` whenever strict provenance stabilizes
@@ -222,6 +260,7 @@ impl Context {
         self.insert_ptr(Arc::as_ptr(arc))
     }
 
+    /// Returns the total size of all objects the current context has seen
     #[inline]
     pub const fn total_size(&self) -> TotalSize {
         TotalSize::new(
@@ -249,6 +288,7 @@ pub struct TotalSize {
 }
 
 impl TotalSize {
+    /// Creates a new `TotalSize`
     #[inline]
     pub const fn new(
         total_bytes: usize,
@@ -264,31 +304,42 @@ impl TotalSize {
         }
     }
 
+    /// Creates a `TotalSize` with a value of zero
     #[inline]
     pub const fn zero() -> Self {
         Self::new(0, 0, 0, 0)
     }
 
+    /// Sets `total_bytes` to `total` and all others to zero
     #[inline]
     pub const fn total(total: usize) -> Self {
         Self::new(total, 0, 0, 0)
     }
 
+    /// Returns the total bytes allocated
     #[inline]
     pub const fn total_bytes(&self) -> usize {
         self.total_bytes
     }
 
+    /// Returns the excess bytes allocated, the unused portions of allocated
+    /// memory
     #[inline]
     pub const fn excess_bytes(&self) -> usize {
         self.excess_bytes
     }
 
+    /// Returns the number of shared bytes, bytes that are shared behind things
+    /// like `Arc` or `Rc`
     #[inline]
     pub const fn shared_bytes(&self) -> usize {
         self.shared_bytes
     }
 
+    /// Returns the number of distinct allocations
+    ///
+    /// For example, a `Box<u32>` contains one distinct allocation while a
+    /// `Box<Box<u32>>` contains two
     #[inline]
     pub const fn distinct_allocations(&self) -> usize {
         self.distinct_allocations

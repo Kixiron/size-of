@@ -10,6 +10,7 @@ use core::{
     ffi::CStr,
     fmt::Arguments,
     future::Pending,
+    hash::BuildHasherDefault,
     marker::{PhantomData, PhantomPinned},
     mem::{ManuallyDrop, MaybeUninit},
     num::{
@@ -174,15 +175,6 @@ where
     }
 }
 
-// `Pending<T>` is a ZST
-impl<T> SizeOf for Pending<T>
-where
-    T: SizeOf,
-{
-    #[inline]
-    fn size_of_children(&self, _context: &mut Context) {}
-}
-
 // TODO: `core::future::Ready<T>`, the problem is that currently there's no way
 // to access the inner value
 
@@ -262,12 +254,16 @@ impl_total_size_childless! {
     CStr,
     Layout,
     Duration,
+    // `Pending<T>` is a zst
+    Pending<T>,
     Infallible,
     cmp::Ordering,
     PhantomPinned,
     MaybeUninit<T>,
     PhantomData<T>,
     atomic::Ordering,
+    // BuildHasherDefault is a zst
+    BuildHasherDefault<T>,
 }
 
 // Implement SizeOf for up to 16-tuples

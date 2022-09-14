@@ -211,7 +211,7 @@ pub(crate) mod hashmap {
     // https://github.com/rust-lang/hashbrown/blob/2a7c32287247e13680bf874c9a6278aad01fac91/src/raw/mod.rs#L242-L255
     // https://github.com/rust-lang/hashbrown/blob/2a7c32287247e13680bf874c9a6278aad01fac91/src/raw/mod.rs#L1067-L1103
     #[inline]
-    const fn calculate_layout_for<T>(buckets: usize) -> usize {
+    pub(crate) const fn calculate_layout_for<T>(buckets: usize) -> usize {
         // FIXME: `max()` isn't a const fn yet
         let align = if align_of::<T>() > GROUP_WIDTH {
             align_of::<T>()
