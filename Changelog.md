@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for the [`ordered-float`](https://docs.rs/ordered-float) crate under the `ordered-float` feature
 - Support for the [`ahash`](https://docs.rs/ahash) crate under the `ahash` feature (along with
   the `ahash-std` feature for when `ahash` has its `std` feature enabled)
+- Support for the [`time`](https://docs.rs/time) crate under the `time` feature along with the `time-std`
+  feature for enabling support for `time`'s `std` feature
+- Support for the [`chrono`](https://docs.rs/chrono) crate under the `chrono` feature
 
 <!-- next-url -->
 [Unreleased]: https://github.com/Kixiron/size-of/compare/...HEAD
