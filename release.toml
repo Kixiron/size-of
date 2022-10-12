@@ -28,8 +28,3 @@ replace = "<!-- next-header -->\n## [Unreleased] - ReleaseDate\n"
 file = "Changelog.md"
 search = "<!-- next-url -->"
 replace = "<!-- next-url -->\n[Unreleased]: https://github.com/Kixiron/size-of/compare/{{tag_name}}...HEAD"
-
-[[pre-release-replacements]]
-file = "Cargo.toml"
-search = "size-of-derive = \\{ version = \".*\""
-replace = "size-of-derive = \\{ version = \"{{version}}\""
