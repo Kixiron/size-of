@@ -31,5 +31,5 @@ replace = "<!-- next-url -->\n[Unreleased]: https://github.com/Kixiron/size-of/c
 
 [[pre-release-replacements]]
 file = "Cargo.toml"
-search = "size-of-derive = { version = \"{{version}}\""
-replace = "size-of-derive = { version = \"{{version}}\""
+search = "size-of-derive = .*"
+replace = "size-of-derive = \\{ version = \"{{version}}\""
