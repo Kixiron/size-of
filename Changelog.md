@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+## Added
+
+- Support for the [`xxhash-rust`](https://docs.rs/xxhash-rust) crate with the `xxhash-xxh32`, `xxhash-xxh64`
+  and `xxhash-xxh3` features for the associated `xxh32`, `xxh64` and `xxh3` features within `xxhash-rust` 
+
 ## [0.1.2] - 2022-10-12
 
 ### Added

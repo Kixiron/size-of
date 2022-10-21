@@ -1,8 +1,9 @@
 // Implement SizeOf for types without meaningful children
 macro_rules! impl_total_size_childless {
-    ($($($ty:ident)::+$(<$($generic:ident),* $(,)?>)?),* $(,)?) => {
+    ($($(#[$meta:meta])* $($ident:ident)::+$(<$($generic:ident),* $(,)?>)?),* $(,)?) => {
         $(
-            impl $(<$($generic),*>)? $crate::SizeOf for $($ty)::+ $(<$($generic),*>)? {
+            $(#[$meta])*
+            impl $(<$($generic),*>)? $crate::SizeOf for $($ident)::+ $(<$($generic),*>)? {
                 #[inline]
                 fn size_of_children(&self, _context: &mut $crate::Context) {}
             }

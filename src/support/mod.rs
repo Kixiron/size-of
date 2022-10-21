@@ -6,3 +6,4 @@ mod hashbrown;
 mod ordered_float;
 mod rust_decimal;
 mod time;
+mod xxhash_rust;

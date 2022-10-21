@@ -28,6 +28,9 @@ std = []
 derive = ["size-of-derive"]
 time-std = ["time", "time/std", "std"]
 ahash-std = ["ahash", "ahash/std", "std"]
+xxhash-xxh3 = ["xxhash-rust", "xxhash-rust/xxh3"]
+xxhash-xxh32 = ["xxhash-rust", "xxhash-rust/xxh32"]
+xxhash-xxh64 = ["xxhash-rust", "xxhash-rust/xxh64"]
 
 [dependencies]
 size-of-derive = { version = "0.1.0", path = "./size-of-derive", optional = true }
@@ -38,6 +41,7 @@ arcstr = { version = "1.1.4", optional = true }
 fxhash = { version = "0.2.1", optional = true }
 chrono = { version = "0.4.22", optional = true }
 hashbrown = { version = "0.12.3", optional = true }
+xxhash-rust = { version = "0.8.6", optional = true }
 rust_decimal = { version = "1.26.1", optional = true }
 ordered-float = { version = "3.0.0", optional = true }
 time = { version = "0.3.15", default-features = false, optional = true }
