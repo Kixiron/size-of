@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+## [0.1.3] - 2022-10-21
+
 ## Added
 
 - Support for the [`xxhash-rust`](https://docs.rs/xxhash-rust) crate with the `xxhash-xxh32`, `xxhash-xxh64`
@@ -30,5 +32,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for the [`chrono`](https://docs.rs/chrono) crate under the `chrono` feature
 
 <!-- next-url -->
-[Unreleased]: https://github.com/Kixiron/size-of/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/Kixiron/size-of/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/Kixiron/size-of/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/Kixiron/size-of/compare/...v0.1.2
