@@ -5,6 +5,7 @@ use alloc::{
     boxed::Box,
     collections::{BTreeMap, BTreeSet},
     string::String,
+    sync::Arc,
     vec,
     vec::Vec,
 };
@@ -136,6 +137,47 @@ fn strings() {
         overallocated.size_of(),
         TotalSize::new(size_of::<String>() + 1000, 1000 - 16, 0, 1),
     );
+}
+
+#[test]
+fn arc() {
+    let arc_u8 = Arc::new(1_u8);
+    assert_eq!(
+        arc_u8.size_of(),
+        TotalSize::new(size_of::<Arc<u8>>() + 1, 0, 1, 1),
+    );
+    assert_eq!(Arc::clone(&arc_u8).size_of(), arc_u8.size_of());
+
+    let string = String::from("0123456789012345");
+    let string_size = string.size_of();
+    assert_eq!(
+        string_size,
+        TotalSize::new(size_of::<String>() + 16, 0, 0, 1),
+    );
+
+    // Internally an arc is made of a usize
+    let arc_bytes = size_of::<usize>();
+    // The total size if the size of the Arc plus the size of the
+    // String.
+    let total_bytes = string_size.total_bytes() + arc_bytes;
+    let excess_bytes = 0;
+    // The whole string is shared
+    let shared_bytes = string_size.total_bytes();
+    // There were two allocations: one for the string, one for the
+    // Arc.
+    let allocations = 2;
+    let mut total_size = TotalSize::new(total_bytes, excess_bytes, shared_bytes, allocations);
+
+    let arc_string = Arc::new(string);
+    assert_eq!(arc_string.size_of(), total_size);
+
+    // A struct that contains two copies of the same Arc
+    let arc_string_clone = Arc::clone(&arc_string);
+    let tuple = (arc_string, arc_string_clone);
+    // Total size is incremented by size_of<Arc<_>>
+    // There is also no new allocation
+    total_size += TotalSize::total(arc_bytes);
+    assert_eq!(tuple.size_of(), total_size,);
 }
 
 #[test]
