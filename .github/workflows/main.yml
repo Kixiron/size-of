@@ -1,0 +1,143 @@
+name: Rust
+
+on: [push, pull_request]
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: 0
+  CARGO_NET_RETRY: 10
+  RUST_BACKTRACE: short
+  RUSTUP_MAX_RETRIES: 10
+
+jobs:
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          components: clippy
+          default: true
+
+      - name: Restore cache
+        uses: Swatinem/rust-cache@v1
+
+      - name: Run clippy
+        uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --all-features --all -- -D warnings
+
+  fmt:
+    name: Rustfmt
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          components: rustfmt
+          default: true
+
+      - name: Run rustfmt
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+
+  links:
+    name: Check Doc Links
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          default: true
+
+      - name: Restore cache
+        uses: Swatinem/rust-cache@v1
+
+      - name: Check links
+        uses: actions-rs/cargo@v1
+        with:
+          command: rustdoc
+          args: --all-features -- -D warnings --cfg docsrs
+
+  tests:
+    name: Tests
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: true
+      max-parallel: 4
+
+      matrix:
+        include:
+          # 64bit Linux stable, beta and nightly
+          - {
+              rust: stable,
+              target: x86_64-unknown-linux-gnu,
+              os: ubuntu-latest,
+            }
+          - { rust: beta, target: x86_64-unknown-linux-gnu, os: ubuntu-latest }
+          - {
+              rust: nightly,
+              target: x86_64-unknown-linux-gnu,
+              os: ubuntu-latest,
+            }
+          # 32bit Linux stable
+          - { rust: stable, target: i686-unknown-linux-gnu, os: ubuntu-latest }
+          # 64bit MacOS stable
+          - { rust: stable, target: x86_64-apple-darwin, os: macos-latest }
+          # 64bit Windows stable
+          - { rust: stable, target: x86_64-pc-windows-msvc, os: windows-latest }
+          # 32bit Windows stable
+          - { rust: stable, target: i686-pc-windows-msvc, os: windows-latest }
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust }}
+          target: ${{ matrix.target }}
+          profile: minimal
+          default: true
+
+      - name: Restore cache
+        uses: Swatinem/rust-cache@v1
+
+      # We split building the tests into a separate step
+      # so that we can easily distinguish between build
+      # errors and failing tests
+      - name: Build tests with all features
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --no-run --all-features  --target ${{ matrix.target }}
+
+      - name: Run tests
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --all-features --target ${{ matrix.target }}
