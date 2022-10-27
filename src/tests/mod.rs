@@ -29,7 +29,10 @@ fn primitives() {
 
     assert_eq!('f'.size_of(), TotalSize::total(4));
     assert_eq!("Hello World!".size_of(), TotalSize::total(12));
-    assert_eq!((&"Hello World!").size_of(), TotalSize::total(16));
+    assert_eq!(
+        (&"Hello World!").size_of(),
+        TotalSize::total(12 + size_of::<usize>()),
+    );
     assert_eq!(true.size_of(), TotalSize::total(1));
 }
 
