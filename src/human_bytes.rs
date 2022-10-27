@@ -1,8 +1,8 @@
+use crate::{Context, SizeOf};
 use core::fmt::{self, Display};
 
 /// Friendlier formatting for byte values
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
-#[cfg_attr(feature = "derive", derive(crate::SizeOf), size_of(crate = "crate"))]
 #[repr(transparent)]
 pub struct HumanBytes {
     /// The inner bytes
@@ -77,4 +77,8 @@ impl Display for HumanBytes {
             write!(f, "{} B", self.bytes)
         }
     }
+}
+
+impl SizeOf for HumanBytes {
+    fn size_of_children(&self, _context: &mut Context) {}
 }

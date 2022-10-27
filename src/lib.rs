@@ -92,7 +92,6 @@ pub trait SizeOf {
 /// The context of a size query, used to keep track of shared pointers and the
 /// aggregated totals of seen data
 #[derive(Debug, Clone, Default)]
-#[cfg_attr(feature = "derive", derive(SizeOf), size_of(crate = "crate"))]
 pub struct Context {
     /// The total bytes used
     total_bytes: usize,
@@ -272,10 +271,15 @@ impl Context {
     }
 }
 
+impl SizeOf for Context {
+    fn size_of_children(&self, context: &mut Context) {
+        self.pointers.size_of_children(context);
+    }
+}
+
 /// Represents the total space taken up by an instance of a variable, including
 /// heap allocations
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
-#[cfg_attr(feature = "derive", derive(SizeOf), size_of(crate = "crate"))]
 pub struct TotalSize {
     /// The total bytes used
     total_bytes: usize,
@@ -402,4 +406,8 @@ impl Sum for TotalSize {
     {
         iter.fold(Self::zero(), |acc, size| acc + size)
     }
+}
+
+impl SizeOf for TotalSize {
+    fn size_of_children(&self, _context: &mut Context) {}
 }
