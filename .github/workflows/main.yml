@@ -125,7 +125,7 @@ jobs:
           default: true
 
       - name: Restore cache
-        uses: Swatinem/rust-cache@v1
+        uses: Swatinem/rust-cache@v2
 
       # We split building the tests into a separate step
       # so that we can easily distinguish between build
