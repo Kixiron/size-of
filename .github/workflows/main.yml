@@ -116,6 +116,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - shell: bash
+        if: matrix.target == 'i686-unknown-linux-gnu'
+        run: |
+          sudo apt update
+          sudo apt install -y gcc-multilib libc6-dev-i386
+
       - name: Install rust
         uses: actions-rs/toolchain@v1
         with:
