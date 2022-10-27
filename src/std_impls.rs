@@ -10,6 +10,7 @@ use core::{
 use std::{
     collections::hash_map::RandomState,
     ffi::{OsStr, OsString},
+    net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddr, SocketAddrV4, SocketAddrV6},
     path::{Path, PathBuf},
     sync::{Barrier, Condvar, Mutex, Once, RwLock},
     thread::{Thread, ThreadId},
@@ -34,6 +35,12 @@ impl_total_size_childless! {
     ThreadId,
     SystemTime,
     RandomState,
+    IpAddr,
+    Ipv4Addr,
+    Ipv6Addr,
+    SocketAddr,
+    SocketAddrV4,
+    SocketAddrV6
 }
 
 impl SizeOf for OsString {
