@@ -8,7 +8,7 @@ use alloc::{
     vec,
     vec::Vec,
 };
-use core::mem::size_of;
+use core::mem::{size_of, size_of_val};
 
 #[test]
 fn primitives() {
@@ -31,7 +31,7 @@ fn primitives() {
     assert_eq!("Hello World!".size_of(), TotalSize::total(12));
     assert_eq!(
         (&"Hello World!").size_of(),
-        TotalSize::total(12 + size_of::<usize>()),
+        TotalSize::total(size_of_val::<&str>(&"Hello World!")),
     );
     assert_eq!(true.size_of(), TotalSize::total(1));
 }
