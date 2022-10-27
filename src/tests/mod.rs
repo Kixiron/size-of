@@ -182,8 +182,12 @@ fn btree() {
 #[cfg(feature = "std")]
 mod std {
     use crate::{std_impls::hashmap::estimate_hashmap_size, SizeOf, TotalSize};
-    use core::mem::size_of;
-    use std::collections::{HashMap, HashSet};
+    use std::{
+        collections::{HashMap, HashSet},
+        mem::size_of,
+        net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddr, SocketAddrV4, SocketAddrV6},
+        str::FromStr,
+    };
 
     #[test]
     fn ui() {
@@ -233,5 +237,32 @@ mod std {
         );
 
         // TODO: Map containing elements
+    }
+
+    #[test]
+    fn socket_addresses() {
+        let ipv4 = Ipv4Addr::new(127, 0, 0, 1);
+        assert_eq!(ipv4.size_of(), TotalSize::total(4));
+
+        let ipv6 = Ipv6Addr::from_str("::1").unwrap();
+        assert_eq!(ipv6.size_of(), TotalSize::total(16));
+
+        let mut ip = IpAddr::V4(ipv4);
+        assert_eq!(ip.size_of(), TotalSize::total(17));
+
+        ip = IpAddr::V6(ipv6);
+        assert_eq!(ip.size_of(), TotalSize::total(17));
+
+        let addrv4 = SocketAddrV4::new(ipv4, 8080);
+        assert_eq!(addrv4.size_of(), TotalSize::total(6));
+
+        let addrv6 = SocketAddrV6::new(ipv6, 1, 2, 3);
+        assert_eq!(addrv6.size_of(), TotalSize::total(28));
+
+        let mut addr = SocketAddr::V4(addrv4);
+        assert_eq!(addr.size_of(), TotalSize::total(32));
+
+        addr = SocketAddr::V6(addrv6);
+        assert_eq!(addr.size_of(), TotalSize::total(32));
     }
 }
