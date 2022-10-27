@@ -62,17 +62,17 @@ impl Display for HumanBytes {
         let bytes = self.bytes as f64;
 
         if bytes / EB > 1.0 {
-            write!(f, "{:.02} EiB", bytes / EB as f64)
+            write!(f, "{:.02} EiB", bytes / EB)
         } else if bytes / PB > 1.0 {
-            write!(f, "{:.02} PiB", bytes / PB as f64)
+            write!(f, "{:.02} PiB", bytes / PB)
         } else if bytes / TB > 1.0 {
-            write!(f, "{:.02} TiB", bytes / TB as f64)
+            write!(f, "{:.02} TiB", bytes / TB)
         } else if bytes / GB > 1.0 {
-            write!(f, "{:.02} GiB", bytes / GB as f64)
+            write!(f, "{:.02} GiB", bytes / GB)
         } else if bytes / MB > 1.0 {
-            write!(f, "{:.02} MiB", bytes / MB as f64)
+            write!(f, "{:.02} MiB", bytes / MB)
         } else if bytes / KB > 1.0 {
-            write!(f, "{:.02} KiB", bytes / KB as f64)
+            write!(f, "{:.02} KiB", bytes / KB)
         } else {
             write!(f, "{} B", self.bytes)
         }
