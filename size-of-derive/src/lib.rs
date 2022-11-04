@@ -1,9 +1,10 @@
 use proc_macro2::{Span, TokenStream};
 use quote::{format_ident, quote};
-use std::ops::Not;
+use std::{mem::replace, ops::Not};
 use syn::{
     parse_macro_input, parse_quote_spanned, Attribute, Data, DeriveInput, Error, Fields, Generics,
-    Index, Lit, Meta, NestedMeta, Path, Result, Type, Variant, WherePredicate,
+    Index, Lit, Meta, NestedMeta, Path, Result, ReturnType, Type, TypeArray, TypeBareFn, TypePtr,
+    TypeReference, TypeSlice, TypeTuple, Variant, WherePredicate,
 };
 
 /// Derives the `SizeOf` trait for the given item
@@ -200,7 +201,7 @@ fn size_of_derive_inner(input: DeriveInput) -> Result<TokenStream> {
                                 TokenStream::new()
                             } else {
                                 let ident = &field.ident;
-                                let ty = &field.ty;
+                                let ty = normalize_type(field.ty.clone());
                                 quote! {
                                     <#ty as #crate_path::SizeOf>::size_of_children(#ident, context);
                                 }
@@ -229,7 +230,7 @@ fn size_of_derive_inner(input: DeriveInput) -> Result<TokenStream> {
                                 TokenStream::new()
                             } else {
                                 let ident = format_ident!("_{idx}");
-                                let ty = &field.ty;
+                                let ty = normalize_type(field.ty.clone());
                                 quote! {
                                     <#ty as #crate_path::SizeOf>::size_of_children(#ident, context);
                                 }
@@ -313,7 +314,7 @@ where
     })
 }
 
-fn make_generic_bounds(input: &DeriveInput, crate_path: &Path, field_types: &[&Type]) -> Generics {
+fn make_generic_bounds(input: &DeriveInput, crate_path: &Path, field_types: &[Type]) -> Generics {
     let mut generics = input.generics.clone();
 
     // Add SizeOf bounds to all all unskipped fields of the type
@@ -327,21 +328,19 @@ fn make_generic_bounds(input: &DeriveInput, crate_path: &Path, field_types: &[&T
     generics
 }
 
-fn collect_field_info<'a>(
-    crate_path: &Path,
-    fields: &'a Fields,
-) -> (Vec<&'a Type>, Vec<TokenStream>) {
+fn collect_field_info(crate_path: &Path, fields: &Fields) -> (Vec<Type>, Vec<TokenStream>) {
     let (mut field_types, field_sizes): (Vec<_>, Vec<_>) = match fields {
         // Collect all field types that aren't annotated with a skip attribute
         Fields::Named(fields) => {
             fields
                 .named
                 .iter()
-                .flat_map(|field| {
-                    if has_skip(&field.attrs) || has_skip_bounds(&field.attrs) {
+                .filter_map(|field| {
+                    let field_type = normalize_type(field.ty.clone());
+
+                    if has_skip(&field.attrs) || has_skip_bounds(&field.attrs) || is_trivial_bound(&field_type) {
                         None
                     } else {
-                        let field_type = &field.ty;
                         let field_ident = &field.ident;
                         let field_size = quote! {
                             <#field_type as #crate_path::SizeOf>::size_of_children(&self.#field_ident, context)
@@ -360,7 +359,7 @@ fn collect_field_info<'a>(
                 .iter()
                 .enumerate()
                 .flat_map(|(idx, field)| has_skip(&field.attrs).not().then(|| {
-                    let field_type = &field.ty;
+                    let field_type = normalize_type(field.ty.clone());
                     let idx = Index::from(idx);
                     let field_size = quote! {
                         <#field_type as #crate_path::SizeOf>::size_of_children(&self.#idx, context)
@@ -382,18 +381,82 @@ fn collect_field_info<'a>(
     (field_types, field_sizes)
 }
 
+/// Returns `true` if the type is trivial elidible
+///
+/// Currently returns `true` for the following types:
+/// - `fn` types, e.g. `fn()`
+/// - Raw pointers, e.g. `*const T`
+///
+// TODO: Can probably extend this to break down nested types like `&T`,
+// `&mut T`, `[T; N]` and `[T]` into just `T`, we know that arrays and
+// slices implement `SizeOf` when the inner type does. We can probably
+// also decompose tuples into their constituent element types
+fn is_trivial_bound(ty: &Type) -> bool {
+    matches!(ty, Type::BareFn(_) | Type::Ptr(_))
+}
+
+/// Normalizes a type
+///
+/// Currently just removes all parenthesis from around the type
+fn normalize_type(mut ty: Type) -> Type {
+    normalize_type_mut(&mut ty);
+    ty
+}
+
+/// Normalizes a type
+///
+/// Currently just removes all parenthesis from around the type
+fn normalize_type_mut(ty: &mut Type) {
+    // Unwrap any parenthesises around the type
+    while let Type::Paren(inner) = ty {
+        *ty = replace(&mut *inner.elem, Type::Verbatim(TokenStream::new()));
+    }
+
+    match ty {
+        Type::Array(TypeArray { elem, .. })
+        | Type::Slice(TypeSlice { elem, .. })
+        | Type::Ptr(TypePtr { elem, .. })
+        | Type::Reference(TypeReference { elem, .. }) => {
+            normalize_type_mut(elem);
+        }
+
+        Type::BareFn(TypeBareFn { inputs, output, .. }) => {
+            for input in inputs {
+                normalize_type_mut(&mut input.ty);
+            }
+
+            if let ReturnType::Type(_, ret) = output {
+                normalize_type_mut(ret);
+            }
+        }
+
+        Type::Tuple(TypeTuple { elems, .. }) => {
+            for elem in elems {
+                normalize_type_mut(elem);
+            }
+        }
+
+        _ => {}
+    }
+}
+
 /// Deduplicate all types within the given vec
-fn dedup_types(field_types: &mut Vec<&Type>) {
+fn dedup_types(field_types: &mut Vec<Type>) {
+    // Ensure that all types are normalized before we start messing with them
+    for ty in &mut *field_types {
+        normalize_type_mut(ty);
+    }
+
     let mut idx = 0;
     while idx < field_types.len() {
-        let current = field_types[idx];
+        let current = field_types[idx].clone();
 
         let mut field_idx = 0;
-        field_types.retain(|&ty| {
+        field_types.retain(|ty| {
             let should_retain = if field_idx <= idx {
                 true
             } else {
-                ty != current
+                ty != &current
             };
             field_idx += 1;
 
