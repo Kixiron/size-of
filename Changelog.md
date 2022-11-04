@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+## [0.1.4] - 2022-11-04
+
 ## Added
 
 - Implemented `SizeOf` for `core::any::TypeId`
@@ -42,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for the [`chrono`](https://docs.rs/chrono) crate under the `chrono` feature
 
 <!-- next-url -->
-[Unreleased]: https://github.com/Kixiron/size-of/compare/v0.1.3...HEAD
+[Unreleased]: https://github.com/Kixiron/size-of/compare/v0.1.4...HEAD
+[0.1.4]: https://github.com/Kixiron/size-of/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/Kixiron/size-of/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/Kixiron/size-of/compare/...v0.1.2
