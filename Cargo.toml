@@ -33,7 +33,7 @@ xxhash-xxh32 = ["xxhash-rust", "xxhash-rust/xxh32"]
 xxhash-xxh64 = ["xxhash-rust", "xxhash-rust/xxh64"]
 
 [dependencies]
-size-of-derive = { version = "0.1.0", path = "./size-of-derive", optional = true }
+size-of-derive = { version = "0.1.2", path = "./size-of-derive", optional = true }
 
 # Crate support
 ahash = { version = "0.8.0", optional = true }
@@ -48,7 +48,7 @@ time = { version = "0.3.15", default-features = false, optional = true }
 
 [dev-dependencies]
 trybuild = "1.0.64"
-size-of-derive = { version = "0.1.0", path = "./size-of-derive" }
+size-of-derive = { version = "0.1.2", path = "./size-of-derive" }
 
 [workspace]
 members = ["size-of-derive"]
