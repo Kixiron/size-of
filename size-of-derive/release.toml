@@ -1,4 +1,4 @@
 [[pre-release-replacements]]
 file = "../Cargo.toml"
-search = "size-of-derive = \\{ version = \".*\""
-replace = "size-of-derive = \\{ version = \"{{version}}\""
+search = "size-of-derive = \\{ version = \"[^\"]*\""
+replace = "size-of-derive = { version = \"{{version}}\""
