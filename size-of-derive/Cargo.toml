@@ -1,6 +1,6 @@
 [package]
 name = "size-of-derive"
-version = "0.1.0"
+version = "0.1.1"
 description = "Automatically derives the SizeOf trait"
 authors = ["Chase Wilson <me@chasewilson.dev>"]
 license = "MIT OR Apache-2.0"
