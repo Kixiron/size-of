@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Made `SizeOf` impls for `Context`, `TotalSize` and `HumanBytes` unconditional
   (were previously dependent on the `derive` feature)
+- Implemented `SizeOf` for `core::any::TypeId`
 
 ## [0.1.3] - 2022-10-21
 

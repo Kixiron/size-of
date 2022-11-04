@@ -4,6 +4,7 @@ use alloc::{
     borrow::{Cow, ToOwned},
 };
 use core::{
+    any::TypeId,
     cell::{Cell, RefCell},
     cmp::{self, Reverse},
     convert::Infallible,
@@ -253,6 +254,7 @@ impl_total_size_childless! {
 
     CStr,
     Layout,
+    TypeId,
     Duration,
     // `Pending<T>` is a zst
     Pending<T>,
