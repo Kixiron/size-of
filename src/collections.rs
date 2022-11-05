@@ -36,9 +36,11 @@ where
     #[inline]
     fn size_of_children(&self, context: &mut Context) {
         if self.capacity() != 0 {
-            context
-                .add_vectorlike(self.len(), self.capacity(), size_of::<T>())
-                .add_distinct_allocation();
+            if size_of::<T>() != 0 {
+                context
+                    .add_vectorlike(self.len(), self.capacity(), size_of::<T>())
+                    .add_distinct_allocation();
+            }
 
             self.as_slice().size_of_children(context);
         }
@@ -51,9 +53,11 @@ where
 {
     fn size_of_children(&self, context: &mut Context) {
         if self.capacity() != 0 {
-            context
-                .add_vectorlike(self.len(), self.capacity(), size_of::<T>())
-                .add_distinct_allocation();
+            if size_of::<T>() != 0 {
+                context
+                    .add_vectorlike(self.len(), self.capacity(), size_of::<T>())
+                    .add_distinct_allocation();
+            }
 
             let (left, right) = self.as_slices();
             left.size_of_children(context);
@@ -68,9 +72,11 @@ where
 {
     fn size_of_children(&self, context: &mut Context) {
         if self.capacity() != 0 {
-            context
-                .add_vectorlike(self.len(), self.capacity(), size_of::<T>())
-                .add_distinct_allocation();
+            if size_of::<T>() != 0 {
+                context
+                    .add_vectorlike(self.len(), self.capacity(), size_of::<T>())
+                    .add_distinct_allocation();
+            }
 
             self.iter()
                 .for_each(|element| element.size_of_children(context));

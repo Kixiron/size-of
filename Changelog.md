@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+## Changed
+
+- Implemented `SizeOf` for `NonNull<T>` where `T: ?Sized`
+
+## Fixed
+
+- Made `Box`, `Vec`, `VecDeque` and `BinaryHeap` not log allocations when they contain ZSTs
+
 ## [0.1.4] - 2022-11-04
 
 ## Added

@@ -50,9 +50,11 @@ where
     T: SizeOf + ?Sized,
 {
     fn size_of_children(&self, context: &mut Context) {
-        context
-            .add(size_of_val(self.as_ref()))
-            .add_distinct_allocation();
+        let size = size_of_val(self.as_ref());
+        if size != 0 {
+            context.add(size).add_distinct_allocation();
+        }
+
         T::size_of_children(self, context);
     }
 }
@@ -103,7 +105,11 @@ impl<T: ?Sized> SizeOf for ArcWeak<T> {
     fn size_of_children(&self, _context: &mut Context) {}
 }
 
+impl<T: ?Sized> SizeOf for NonNull<T> {
+    #[inline]
+    fn size_of_children(&self, _context: &mut Context) {}
+}
+
 impl_total_size_childless! {
-    NonNull<T>,
     AtomicPtr<T>,
 }

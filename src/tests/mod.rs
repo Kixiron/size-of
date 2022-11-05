@@ -3,7 +3,7 @@
 use crate::{collections::btree::estimate_btree_size, SizeOf, TotalSize};
 use alloc::{
     boxed::Box,
-    collections::{BTreeMap, BTreeSet},
+    collections::{BTreeMap, BTreeSet, BinaryHeap, VecDeque},
     string::String,
     sync::Arc,
     vec,
@@ -42,6 +42,15 @@ fn boxed() {
     assert_eq!(
         Box::new(0u32).size_of(),
         TotalSize::new(4 + size_of::<usize>(), 0, 0, 1),
+    );
+}
+
+#[test]
+fn boxed_zst() {
+    assert_eq!(
+        Box::new(()).size_of(),
+        // Just the size of the pointer, no heap allocations
+        TotalSize::total(size_of::<Box<()>>()),
     );
 }
 
@@ -112,6 +121,26 @@ fn vec() {
             0,
             2,
         ),
+    );
+}
+
+#[test]
+fn collections_of_zsts() {
+    assert_eq!(
+        vec![(), (), (), ()].size_of(),
+        // Nothing but the vec's `{ ptr, len, cap }`, no heap allocation should be recorded
+        TotalSize::total(size_of::<Vec<()>>()),
+    );
+
+    let mut queue = VecDeque::new();
+    queue.extend([(), (), (), (), ()]);
+    assert_eq!(queue.size_of(), TotalSize::total(size_of::<VecDeque<()>>()));
+
+    let mut heap = BinaryHeap::new();
+    heap.extend([(), (), (), (), ()]);
+    assert_eq!(
+        heap.size_of(),
+        TotalSize::total(size_of::<BinaryHeap<()>>()),
     );
 }
 
