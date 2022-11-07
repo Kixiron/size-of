@@ -40,7 +40,7 @@ impl_total_size_childless! {
     Ipv6Addr,
     SocketAddr,
     SocketAddrV4,
-    SocketAddrV6
+    SocketAddrV6,
 }
 
 impl SizeOf for OsString {

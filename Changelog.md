@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+## Added
+
+- Implemented `SizeOf` for `std::net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddr, SocketAddrV4, SocketAddrV6}`
+
 ## Changed
 
 - Implemented `SizeOf` for `NonNull<T>` where `T: ?Sized`
