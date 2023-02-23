@@ -24,3 +24,5 @@ A crate for measuring the total memory usage of an object at runtime
   - `xxhash-xxh32`: Enables support for `xxhhash-rust`'s `xxh32` feature
   - `xxhash-xxh64`: Enables support for `xxhhash-rust`'s `xxh64` feature
   - `xxhash-xxh3`: Enables support for `xxhhash-rust`'s `xxh3` feature
+- `bigdecimal`: Enables support for the [`bigdecimal`](https://docs.rs/bigdecimal) crate
+- `num-bigint`: Enables support for the [`num-bigint`](https://docs.rs/num-bigint) crate
