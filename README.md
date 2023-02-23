@@ -1,3 +1,6 @@
+![Crates.io](https://img.shields.io/crates/v/size-of)
+![docs.rs](https://img.shields.io/docsrs/size-of)
+
 # Size Of
 
 A crate for measuring the total memory usage of an object at runtime
