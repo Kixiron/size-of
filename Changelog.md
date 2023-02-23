@@ -11,10 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Added
 
 - Implemented `SizeOf` for `std::net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddr, SocketAddrV4, SocketAddrV6}`
+- Added support for the [`bigdecimal`](https://crates.io/crates/bigdecimal) crate under the `bigdecimal` feature
+- Added support for the [`num-bigint`](https://crates.io/crates/num-bigint) crate under the `num-bigint` feature
 
 ## Changed
 
 - Implemented `SizeOf` for `NonNull<T>` where `T: ?Sized`
+- Updated the `hashbrown` crate
 
 ## Fixed
 

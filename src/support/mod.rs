@@ -1,8 +1,10 @@
 mod ahash;
 mod arcstr;
+mod bigdecimal;
 mod chrono;
 mod fxhash;
 mod hashbrown;
+mod num_bigint;
 mod ordered_float;
 mod rust_decimal;
 mod time;
