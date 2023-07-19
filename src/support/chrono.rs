@@ -38,6 +38,8 @@ impl_total_size_childless! {
     ParseWeekdayError,
 }
 
+// FIXME: `chrono::Date` is deprecated
+#[allow(deprecated)]
 impl<Tz> SizeOf for Date<Tz>
 where
     Tz: TimeZone,

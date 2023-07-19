@@ -229,7 +229,7 @@ impl Context {
     #[inline]
     pub fn insert_ptr<T: ?Sized>(&mut self, ptr: *const T) -> bool {
         // TODO: Use `pointer::addr()` whenever strict provenance stabilizes
-        self.pointers.insert(ptr as *const T as *const u8 as usize)
+        self.pointers.insert(ptr as *const u8 as usize)
     }
 
     /// Adds the given pointer to the current context regardless of whether it's
@@ -244,8 +244,7 @@ impl Context {
     #[inline]
     pub fn contains_ptr<T: ?Sized>(&self, ptr: *const T) -> bool {
         // TODO: Use `pointer::addr()` whenever strict provenance stabilizes
-        self.pointers
-            .contains(&(ptr as *const T as *const u8 as usize))
+        self.pointers.contains(&(ptr as *const u8 as usize))
     }
 
     // fn insert_ref<T: ?Sized>(&mut self, reference: &T) -> bool {
