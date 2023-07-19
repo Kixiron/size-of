@@ -10,6 +10,7 @@ use core::{
 use std::{
     collections::hash_map::RandomState,
     ffi::{OsStr, OsString},
+    fs::{DirEntry, File, FileType, Metadata, OpenOptions, Permissions},
     net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddr, SocketAddrV4, SocketAddrV6},
     path::{Path, PathBuf},
     sync::{Barrier, Condvar, Mutex, Once, RwLock},
@@ -41,6 +42,12 @@ impl_total_size_childless! {
     SocketAddr,
     SocketAddrV4,
     SocketAddrV6,
+    File,
+    FileType,
+    Metadata,
+    OpenOptions,
+    Permissions,
+    DirEntry,
 }
 
 impl SizeOf for OsString {

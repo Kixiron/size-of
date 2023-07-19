@@ -8,12 +8,13 @@ use core::{
     cell::{Cell, RefCell},
     cmp::{self, Reverse},
     convert::Infallible,
-    ffi::CStr,
+    ffi::{c_void, CStr, FromBytesWithNulError},
     fmt::Arguments,
     future::Pending,
     hash::BuildHasherDefault,
     marker::{PhantomData, PhantomPinned},
     mem::{ManuallyDrop, MaybeUninit},
+    num::FpCategory,
     num::{
         NonZeroI128, NonZeroI16, NonZeroI32, NonZeroI64, NonZeroI8, NonZeroIsize, NonZeroU128,
         NonZeroU16, NonZeroU32, NonZeroU64, NonZeroU8, NonZeroUsize, Wrapping,
@@ -227,6 +228,8 @@ impl_total_size_childless! {
     f32,
     f64,
 
+    c_void,
+
     AtomicBool,
     AtomicU8,
     AtomicI8,
@@ -258,6 +261,7 @@ impl_total_size_childless! {
     Duration,
     // `Pending<T>` is a zst
     Pending<T>,
+    FpCategory,
     Infallible,
     cmp::Ordering,
     PhantomPinned,
@@ -266,6 +270,7 @@ impl_total_size_childless! {
     atomic::Ordering,
     // BuildHasherDefault is a zst
     BuildHasherDefault<T>,
+    FromBytesWithNulError,
 }
 
 // Implement SizeOf for up to 16-tuples

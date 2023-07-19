@@ -2,11 +2,14 @@
 #![doc = include_str!("../README.md")]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 #![cfg_attr(not(feature = "std"), no_std)]
+#![cfg_attr(feature = "stdsimd", feature(stdsimd))]
+#![cfg_attr(feature = "portable-simd", feature(portable_simd))]
 
 extern crate alloc;
 
 #[macro_use]
 mod macros;
+mod arch;
 mod collections;
 mod core_impls;
 mod human_bytes;

@@ -31,6 +31,8 @@ ahash-std = ["ahash", "ahash/std", "std"]
 xxhash-xxh3 = ["xxhash-rust", "xxhash-rust/xxh3"]
 xxhash-xxh32 = ["xxhash-rust", "xxhash-rust/xxh32"]
 xxhash-xxh64 = ["xxhash-rust", "xxhash-rust/xxh64"]
+portable-simd = []
+stdsimd = []
 
 [dependencies]
 size-of-derive = { version = "0.1.2", path = "./size-of-derive", optional = true }

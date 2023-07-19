@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- next-header -->
 ## [Unreleased] - ReleaseDate
 
+- Implemented `SizeOf` for `core::ffi::c_void`
+- Implemented `SizeOf` for `std::fs::{DirEntry, File, FileType, Metadata, OpenOptions, Permissions}`
+- Added support for the [`portable-simd`](https://github.com/rust-lang/rust/issues/86656) Rust feature,
+  adds support for the `core::simd::Simd<T>` and `core::simd::Mask<T>` family of types (requires nightly compiler)
+- Added support for the structs of `core::arch::{x86, x86_64, arm, aarch64, wasm, powerpc, powerpc64}`
+  (`powerpc` and `powerpc64` require the `stdsimd` feature)
+- Added the `stdsimd` feature flag which implements `SizeOf` for experimental simd types within `core::arch`
+- Implemented `SizeOf` for `core::num::FpCategory`
+
 ## [0.1.5] - 2023-02-23
 
 ## Added

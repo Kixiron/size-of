@@ -6,6 +6,7 @@ mod fxhash;
 mod hashbrown;
 mod num_bigint;
 mod ordered_float;
+mod portable_simd;
 mod rust_decimal;
 mod time;
 mod xxhash_rust;
